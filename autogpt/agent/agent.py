@@ -1,3 +1,5 @@
+import logging
+
 from colorama import Fore, Style
 
 from autogpt.app import execute_command, get_command
@@ -39,6 +41,7 @@ class Agent:
         next_action_count,
         system_prompt,
         triggering_prompt,
+        session_id,
     ):
         self.ai_name = ai_name
         self.memory = memory
@@ -46,6 +49,7 @@ class Agent:
         self.next_action_count = next_action_count
         self.system_prompt = system_prompt
         self.triggering_prompt = triggering_prompt
+        self.session_id = session_id
 
     def start_interaction_loop(self):
         # Interaction Loop
@@ -65,19 +69,30 @@ class Agent:
                 logger.typewriter_log(
                     "连续达到限制: ", Fore.YELLOW, f"{cfg.continuous_limit}"
                 )
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id, "连续达到限制: ", f"{cfg.continuous_limit}"
+                )
                 break
 
             # 将消息发送给AI并获得响应
             with Spinner("正在思考... "):
+                '''
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id, "正在思考...  "
+                )
+                '''
                 assistant_reply = chat_with_ai(
                     self.system_prompt,
                     self.triggering_prompt,
                     self.full_message_history,
                     self.memory,
                     cfg.fast_token_limit,
+                    self.session_id,
                 )  # TODO: This hardcodes the model to use GPT3.5. Make this an argument
 
-            assistant_reply_json = fix_json_using_multiple_techniques(assistant_reply)
+            assistant_reply_json = fix_json_using_multiple_techniques(assistant_reply, self.session_id)
 
             if not isinstance(assistant_reply_json, dict):
                 logger.error(
@@ -100,6 +115,10 @@ class Agent:
                         say_text(f"我要执行 {translate_command(command_name)}")
                 except Exception as e:
                     logger.error("Error: \n", str(e))
+                    # 钉钉消息
+                    logger.dingtalk_log(
+                        self.session_id, "Error: \n", str(e), logging.ERROR
+                    )
 
             if not cfg.continuous_mode and self.next_action_count == 0:
                 ### 根据配置，获取用户对执行命令的授权或直接执行命令 ###
@@ -111,6 +130,15 @@ class Agent:
                     f"指令 = {Fore.CYAN}{translate_command(command_name)}{Style.RESET_ALL}  "
                     f"参数 = {Fore.CYAN}{translate_command_args(arguments)}{Style.RESET_ALL}",
                 )
+                '''
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id,
+                    "下一步操作: ",
+                    f"指令 = {translate_command(command_name)}  "
+                    f"参数 = {translate_command_args(arguments)}",
+                )
+                '''
                 print(
                     f"输入'y'授权命令，'y -N'运行N个连续命令，'n'退出程序，或为{self.ai_name}输入反馈...",
                     flush=True)
@@ -157,6 +185,15 @@ class Agent:
                     f"指令 = {Fore.CYAN}{translate_command(command_name)}{Style.RESET_ALL}"
                     f"  参数 = {Fore.CYAN}{translate_command_args(arguments)}{Style.RESET_ALL}",
                 )
+                '''
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id,
+                    "下一步操作: ",
+                    f"指令 = {translate_command(command_name)}  "
+                    f"参数 = {translate_command_args(arguments)}",
+                )
+                '''
 
             # Execute command
             if command_name is not None and command_name.lower().startswith("error"):
@@ -169,14 +206,23 @@ class Agent:
             elif command_name == "human_feedback":
                 result = f"人工反馈: {user_input}"
                 result_localized = result
+            elif command_name == "do_nothing":
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id,
+                    "执行结束",
+                )
+                print("退出中...", flush=True)
+                return
             else:
+                command_result = execute_command(command_name, arguments, self.session_id)
                 result = (
                     f"Command {command_name} returned: "
-                    f"{execute_command(command_name, arguments)}"
+                    f"{command_result}"
                 )
                 result_localized = (
                     f"指令 {translate_command(command_name)} 返回了: "
-                    f"{execute_command(command_name, arguments)}"
+                    f"{command_result}"
                 )
                 if self.next_action_count > 0:
                     self.next_action_count -= 1
@@ -194,10 +240,24 @@ class Agent:
             if result is not None:
                 self.full_message_history.append(create_chat_message("system", result))
                 logger.typewriter_log("系统: ", Fore.YELLOW, result_localized)
+                '''
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id,
+                    "系统: ",
+                    result_localized,
+                )
+                '''
             else:
                 self.full_message_history.append(
                     create_chat_message("system", "无法执行命令")
                 )
                 logger.typewriter_log(
                     "SYSTEM: ", Fore.YELLOW, "无法执行命令"
+                )
+                # 钉钉消息
+                logger.dingtalk_log(
+                    self.session_id,
+                    "系统:",
+                    "无法执行命令",
                 )

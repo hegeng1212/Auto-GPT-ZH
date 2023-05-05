@@ -129,6 +129,21 @@ def get_prompt() -> str:
         ("Task Complete (Shutdown)", "task_complete", {"reason": "<reason>"}),
     )
 
+    commands.append(
+        (
+            "Search Meeting Room (查找可用的会议室)",
+            "search_meeting_room",
+            {"start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
+        ),
+    )
+    commands.append(
+        (
+            "Reserve Meeting Room (预定会议室)",
+            "reserve_meeting_room",
+            {"room_name": "<room_name>", "start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
+        ),
+    )
+
     # Add commands to the PromptGenerator object
     for command_label, command_name, args in commands:
         prompt_generator.add_command(command_label, command_name, args)

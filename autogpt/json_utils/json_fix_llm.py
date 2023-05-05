@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import json
+import logging
 from typing import Any, Dict
 
 from colorama import Fore
@@ -83,7 +84,7 @@ def auto_fix_json(json_string: str, schema: str) -> str:
         return "failed"
 
 
-def fix_json_using_multiple_techniques(assistant_reply: str) -> Dict[Any, Any]:
+def fix_json_using_multiple_techniques(assistant_reply: str, session_id: str) -> Dict[Any, Any]:
     """Fix the given JSON string to make it parseable and fully compliant with two techniques.
 
     Args:
@@ -106,6 +107,13 @@ def fix_json_using_multiple_techniques(assistant_reply: str) -> Dict[Any, Any]:
     logger.error(
         "Error: 以下 AI 输出无法转换为 JSON:\n",
         assistant_reply,
+    )
+    # 钉钉消息
+    logger.dingtalk_log(
+        session_id,
+        "Error: 以下 AI 输出无法转换为 JSON:\n",
+        assistant_reply,
+        logging.ERROR
     )
     if CFG.speak_mode:
         say_text("I have received an invalid JSON response from the OpenAI API.")

@@ -39,6 +39,11 @@ from autogpt.localization import translate_memory_type
     help="指定在使用Selenium爬取Web时要使用的Web浏览器.",
 )
 @click.option(
+    "-sid",
+    "--session-id",
+    help="会话的sessionid.",
+)
+@click.option(
     "--allow-downloads",
     is_flag=True,
     help="危险：允许 Auto-GPT 本地下载文件。。这个选项可能允许 Auto-GPT 下载文件到本地计算机中，这可能会带来一些潜在的安全风险，因此需要格外小心使用.",
@@ -61,6 +66,7 @@ def main(
     gpt4only: bool,
     memory_type: str,
     browser_name: str,
+    session_id: str,
     allow_downloads: bool,
     skip_news: bool,
 ) -> None:
@@ -82,6 +88,11 @@ def main(
     from autogpt.memory import get_memory
     from autogpt.prompt import construct_prompt
     from autogpt.utils import get_current_git_branch, get_latest_bulletin
+
+    # from autogpt.commands.dingtalk import reserve_meeting_room, search_meeting_room
+    # res = search_meeting_room('dtm_07310716567035_2', '2023-05-06 16:00:00', '2023-05-06 17:00:00')
+    # reserve_meeting_room('dtm_07310716567035_2', res["room_name"], '2023-05-06 16:00:00', '2023-05-06 17:00:00')
+    # print("退出中...", flush=True)
 
     if ctx.invoked_subcommand is None:
         cfg = Config()
@@ -144,6 +155,11 @@ def main(
             next_action_count=next_action_count,
             system_prompt=system_prompt,
             triggering_prompt=triggering_prompt,
+            session_id=session_id,
+        )
+        # 钉钉消息
+        logger.dingtalk_log(
+            session_id, "开始执行"
         )
         # 启动交互循环，使用户可以与AutoGPT应用程序进行交互
         agent.start_interaction_loop()

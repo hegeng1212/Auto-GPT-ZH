@@ -13,6 +13,9 @@ from colorama import Fore, Style
 from autogpt.config import Config, Singleton
 from autogpt.speech import say_text
 
+import requests
+
+
 CFG = Config()
 
 
@@ -93,6 +96,24 @@ class Logger(metaclass=Singleton):
         self.typing_logger.log(
             level, content, extra={"title": title, "color": title_color}
         )
+
+    def dingtalk_log(
+        self, session_id, title="", content="", level=logging.INFO
+    ):
+        if content:
+            if isinstance(content, list):
+                content = " ".join(content)
+        else:
+            content = ""
+
+        url = "http://bsp.babytree.com/open/dingtalk/sendMessage"
+        level_name = logging.getLevelName(level)
+        data = {
+            "session_id": session_id,
+            "message": "[" + level_name + "]" + title + "\n" + content,
+        }
+        requests.get(url, params=data)
+
 
     def debug(
         self,

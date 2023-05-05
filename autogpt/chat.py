@@ -51,7 +51,7 @@ def generate_context(prompt, relevant_memory, full_message_history, model):
 
 # TODO: Change debug from hardcode to argument
 def chat_with_ai(
-    prompt, user_input, full_message_history, permanent_memory, token_limit
+    prompt, user_input, full_message_history, permanent_memory, token_limit, session_id
 ):
     """Interact with the OpenAI API, sending the prompt, user input, message history,
     and permanent memory."""
@@ -154,12 +154,15 @@ def chat_with_ai(
                 logger.debug("")
             logger.debug("----------- END OF CONTEXT ----------------")
 
+            logger.debug("Promot Message: " + str(current_context))
+
             # TODO: use a model defined elsewhere, so that model can contain
             # temperature and other settings we care about
             assistant_reply = create_chat_completion(
                 model=model,
                 messages=current_context,
                 max_tokens=tokens_remaining,
+                session_id=session_id,
             )
 
             # Update full message history

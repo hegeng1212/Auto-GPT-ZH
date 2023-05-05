@@ -30,7 +30,9 @@ cmd_tr: dict[str, str] = {
     'download_file': '下载文件',
     'do_nothing': '什么都不做',
     'task_complete': '任务完成',
-    'human_feedback': '人类反馈'
+    'human_feedback': '人类反馈',
+    'reserve_meeting_room': '预定会议室',
+    'search_meeting_room': '搜索可用的会议室'
 }
 
 cmd_arg_tr: dict[str, str] = {
@@ -56,6 +58,9 @@ cmd_arg_tr: dict[str, str] = {
     'repository_url': '仓库网址',
     'query': '搜索词',
     'reason': '原因',
+    'start_time': '开始时间',
+    'end_time': '结束时间',
+    'room_name': '会议室名称',
 }
 
 mem_type_tr: dict[str, str] = {

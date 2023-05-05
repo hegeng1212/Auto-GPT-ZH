@@ -57,6 +57,7 @@ def create_chat_completion(
     model: str | None = None,
     temperature: float = CFG.temperature,
     max_tokens: int | None = None,
+    session_id: str | None = None,
 ) -> str:
     """Create a chat completion using the OpenAI API
 
@@ -109,6 +110,12 @@ def create_chat_completion(
                     + f"您可以在此处阅读更多信息：{Fore.CYAN}https://github.com/Significant-Gravitas/Auto-GPT#openai-api-keys-configuration{Fore.RESET}"
                     )
                 warned_user = True
+                # 钉钉消息
+                logger.dingtalk_log(
+                    session_id,
+                    f"已到达请求频率限制，将在稍后自动重试。请设置一个已付费的OpenAI API账户来绕过此限制。"
+                    + f"您可以在此处阅读更多信息：https://github.com/Significant-Gravitas/Auto-GPT#openai-api-keys-configuration",
+                )
         except APIError as e:
             if e.http_status == 502:
                 pass
@@ -128,6 +135,13 @@ def create_chat_completion(
             Fore.RED,
             "Auto-GPT has failed to get a response from OpenAI's services. "
             + f"Try running Auto-GPT again, and if the problem the persists try running it with `{Fore.CYAN}--debug{Fore.RESET}`.",
+        )
+        # 钉钉消息
+        logger.dingtalk_log(
+            session_id,
+            "FAILED TO GET RESPONSE FROM OPENAI",
+            "Auto-GPT has failed to get a response from OpenAI's services. "
+            + f"Try running Auto-GPT again, and if the problem the persists try running it with `--debug`.",
         )
         logger.double_check()
         if CFG.debug_mode:

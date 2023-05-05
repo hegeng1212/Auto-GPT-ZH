@@ -26,11 +26,13 @@ from autogpt.commands.twitter import send_tweet
 from autogpt.commands.web_requests import scrape_links, scrape_text
 from autogpt.commands.web_selenium import browse_website
 from autogpt.commands.write_tests import write_tests
+from autogpt.commands.dingtalk import reserve_meeting_room, search_meeting_room
 from autogpt.config import Config
 from autogpt.json_utils.json_fix_llm import fix_and_parse_json
 from autogpt.memory import get_memory
 from autogpt.processing.text import summarize_text
 from autogpt.speech import say_text
+from autogpt.logs import logger
 
 CFG = Config()
 AGENT_MANAGER = AgentManager()
@@ -112,7 +114,7 @@ def map_command_synonyms(command_name: str):
     )
 
 
-def execute_command(command_name: str, arguments):
+def execute_command(command_name: str, arguments, session_id: str):
     """Execute the command and return the result
 
     Args:
@@ -218,7 +220,11 @@ def execute_command(command_name: str, arguments):
         elif command_name == "do_nothing":
             return "No action performed."
         elif command_name == "task_complete":
-            shutdown()
+            shutdown(session_id)
+        elif command_name == "reserve_meeting_room":
+            return reserve_meeting_room(session_id, arguments["room_name"], arguments["start_time"], arguments["end_time"])
+        elif command_name == "search_meeting_room":
+            return search_meeting_room(session_id, arguments["start_time"], arguments["end_time"])
         else:
             return (
                 f"Unknown command '{command_name}'. Please refer to the 'COMMANDS'"
@@ -256,9 +262,14 @@ def get_hyperlinks(url: str) -> Union[str, List[str]]:
     return scrape_links(url)
 
 
-def shutdown() -> NoReturn:
+def shutdown(session_id) -> NoReturn:
     """Shut down the program"""
     print("关闭中...")
+    # 钉钉消息
+    logger.dingtalk_log(
+        session_id,
+        "执行结束",
+    )
     quit()
 
 
