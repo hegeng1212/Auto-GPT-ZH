@@ -6,13 +6,19 @@ from autogpt.config.ai_config import AIConfig
 from autogpt.logs import logger
 
 
-def prompt_user() -> AIConfig:
+def prompt_user(ai_goal: str) -> AIConfig:
     """提示用户输入内容
 
     Returns:
         AIConfig: The AIConfig object containing the user's input
     """
-    ai_name = ""
+    ai_name = "小树智能"
+    ai_role = "一个旨在自主开发和经营企业以唯一目标增加你净值的人工智能"
+    ai_goals = [
+        ai_goal,
+    ]
+
+    '''
     # Construct the prompt
     logger.typewriter_log(
         "欢迎来到 Auto-GPT-ZH! 中文版由AJ提供. ",
@@ -68,5 +74,6 @@ def prompt_user() -> AIConfig:
             "增加 Twitter 账户的关注者",
             "自主开发和管理多个业务",
         ]
+    '''
 
     return AIConfig(ai_name, ai_role, ai_goals)

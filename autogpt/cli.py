@@ -44,6 +44,11 @@ from autogpt.localization import translate_memory_type
     help="会话的sessionid.",
 )
 @click.option(
+    "-goal",
+    "--ai-goal",
+    help="目标.",
+)
+@click.option(
     "--allow-downloads",
     is_flag=True,
     help="危险：允许 Auto-GPT 本地下载文件。。这个选项可能允许 Auto-GPT 下载文件到本地计算机中，这可能会带来一些潜在的安全风险，因此需要格外小心使用.",
@@ -67,6 +72,7 @@ def main(
     memory_type: str,
     browser_name: str,
     session_id: str,
+    ai_goal: str,
     allow_downloads: bool,
     skip_news: bool,
 ) -> None:
@@ -132,7 +138,7 @@ def main(
                     Fore.RED,
                     "您正在运行旧版本的Python。某些人使用此版本会观察到Auto-GPT某些部分出现问题。请考虑升级到Python 3.10或更高版本。",
                 )
-        system_prompt = construct_prompt()
+        system_prompt = construct_prompt(ai_goal)
         # print(prompt)
         # 初始化一些变量，例如消息历史记录、下一个动作计数等
         full_message_history = []

@@ -176,13 +176,14 @@ def get_prompt() -> str:
     return prompt_generator.generate_prompt_string()
 
 
-def construct_prompt() -> str:
+def construct_prompt(ai_goal: str) -> str:
     """Construct the prompt for the AI to respond to
 
     Returns:
         str: The prompt string
     """
     config = AIConfig.load(CFG.ai_settings_file)
+    '''
     if CFG.skip_reprompt and config.ai_name:
         logger.typewriter_log("名称 :", Fore.GREEN, config.ai_name)
         logger.typewriter_log("职责 :", Fore.GREEN, config.ai_role)
@@ -203,10 +204,15 @@ def construct_prompt() -> str:
         )
         if should_continue.lower() == "n":
             config = AIConfig()
+    
 
     if not config.ai_name:
         config = prompt_user()
         config.save(CFG.ai_settings_file)
+    '''
+
+    config = prompt_user(ai_goal)
+    config.save(CFG.ai_settings_file)
 
     # Get rid of this global:
     global ai_name
