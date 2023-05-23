@@ -45,6 +45,22 @@ def get_prompt() -> str:
     # Define the command list
     commands = [
         ("Google Search", "google", {"input": "<search>"}),
+
+        (
+            "Search Meeting Room (查找可用的会议室)",
+            "search_meeting_room",
+            {"start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
+        ),
+        (
+            "Reserve Meeting Room (预定会议室)",
+            "reserve_meeting_room",
+            {"room_name": "<room_name>", "start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
+        ),
+        (
+            "Daily Report (指定日期的日报)",
+            "get_daily_report",
+            {"date": "<日报日期，格式Ymd>"},
+        ),
         (
             "Browse Website",
             "browse_website",
@@ -129,27 +145,7 @@ def get_prompt() -> str:
         ("Task Complete (Shutdown)", "task_complete", {"reason": "<reason>"}),
     )
 
-    commands.append(
-        (
-            "Search Meeting Room (查找可用的会议室)",
-            "search_meeting_room",
-            {"start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
-        ),
-    )
-    commands.append(
-        (
-            "Reserve Meeting Room (预定会议室)",
-            "reserve_meeting_room",
-            {"room_name": "<room_name>", "start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
-        ),
-    )
-    commands.append(
-        (
-            "Search Daily Report (查找日报)",
-            "get_daily_report",
-            {"date": "<日报日期，格式Ymd>"},
-        ),
-    )
+
 
 
     # Add commands to the PromptGenerator object

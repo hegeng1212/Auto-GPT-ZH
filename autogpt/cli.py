@@ -2,7 +2,6 @@
 import click
 from autogpt.localization import translate_memory_type
 
-
 @click.group(invoke_without_command=True)
 @click.option("-c", "--continuous", is_flag=True, help="启用连续模式")
 @click.option(
@@ -167,6 +166,7 @@ def main(
         logger.dingtalk_log(
             session_id, "开始执行"
         )
+
         # 启动交互循环，使用户可以与AutoGPT应用程序进行交互
         agent.start_interaction_loop()
 

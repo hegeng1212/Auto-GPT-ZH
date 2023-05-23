@@ -110,7 +110,7 @@ class Logger(metaclass=Singleton):
         level_name = logging.getLevelName(level)
         data = {
             "session_id": session_id,
-            "message": "[" + level_name + "]" + title + "\n" + content,
+            "message": title + "\n" + content,
         }
         requests.get(url, params=data)
 

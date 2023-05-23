@@ -92,7 +92,7 @@ def search_meeting_room(session_id, start_time, end_time) -> list[str]:
         return {}
 
 
-def get_daily_report(session_id, date):
+def get_daily_report(session_id, date) -> str:
     url = "http://bsp.babytree.com/open/dingtalk/GetDailyReport"
     data = {
         "session_id": session_id,
@@ -108,7 +108,7 @@ def get_daily_report(session_id, date):
 
     res_data = json.loads(json.dumps(response.json()))
     if res_data["code"] == 200:
-        if res_data["data"] == "":
+        if res_data["data"] == "" or res_data["data"]["data"] == "":
             # 钉钉消息
             logger.dingtalk_log(
                 session_id,
@@ -117,11 +117,16 @@ def get_daily_report(session_id, date):
             print("指定时间没有日报，请更改时间\n" + f"时间：{date}\n")
             return {}
 
-        prompt = get_report_prompt(res_data["data"], date)
+        prompt = get_report_prompt(res_data["data"]["data"], date)
         model = cfg.fast_llm_model
+        current_context = [
+            create_chat_message("system", prompt),
+            create_chat_message("user", "请按上述要求，输出日报内容："),
+        ]
+
         assistant_reply = create_chat_completion(
             model=model,
-            messages=prompt,
+            messages=current_context,
             session_id=session_id,
         )
 
@@ -131,16 +136,16 @@ def get_daily_report(session_id, date):
             assistant_reply,
         )
         print("日报查询成功\n" + assistant_reply)
-        return
+        return "日报查询成功"
     else:
         # 钉钉消息
         logger.dingtalk_log(
             session_id,
-            "会议室查询失败",
+            "日报查询失败",
             res_data["msg"],
         )
-        print("会议室查询失败\n" + res_data["msg"])
-        return
+        print("日报查询失败\n" + res_data["msg"])
+        return "日报查询失败"
 
 def get_report_prompt(daily, date) -> str:
     prompt = "你是一个智能助理，帮助撰写工作日报。\n"
@@ -167,3 +172,16 @@ def get_report_prompt(daily, date) -> str:
     建议：
 """
     return prompt
+
+def create_chat_message(role, content):
+    """
+    Create a chat message with the given role and content.
+
+    Args:
+    role (str): The role of the message sender, e.g., "system", "user", or "assistant".
+    content (str): The content of the message.
+
+    Returns:
+    dict: A dictionary containing the role and content of the message.
+    """
+    return {"role": role, "content": content}
