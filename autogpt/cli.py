@@ -163,9 +163,11 @@ def main(
             session_id=session_id,
         )
         # 钉钉消息
+        '''
         logger.dingtalk_log(
             session_id, "开始执行"
         )
+        '''
 
         # 启动交互循环，使用户可以与AutoGPT应用程序进行交互
         agent.start_interaction_loop()

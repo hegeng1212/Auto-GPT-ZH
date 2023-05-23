@@ -70,9 +70,11 @@ class Agent:
                     "连续达到限制: ", Fore.YELLOW, f"{cfg.continuous_limit}"
                 )
                 # 钉钉消息
+                '''
                 logger.dingtalk_log(
                     self.session_id, "连续达到限制: ", f"{cfg.continuous_limit}"
                 )
+                '''
                 break
 
             # 将消息发送给AI并获得响应
@@ -208,10 +210,12 @@ class Agent:
                 result_localized = result
             elif command_name == "do_nothing":
                 # 钉钉消息
+                '''
                 logger.dingtalk_log(
                     self.session_id,
                     "执行结束",
                 )
+                '''
                 print("退出中...", flush=True)
                 return
             else:
