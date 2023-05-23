@@ -143,6 +143,14 @@ def get_prompt() -> str:
             {"room_name": "<room_name>", "start_time": "<会议开始时间，格式Y-m-d H:i:s>", "end_time": "<会议结束时间，格式Y-m-d H:i:s>"},
         ),
     )
+    commands.append(
+        (
+            "Search Daily Report (查找日报)",
+            "get_daily_report",
+            {"date": "<日报日期，格式Ymd>"},
+        ),
+    )
+
 
     # Add commands to the PromptGenerator object
     for command_label, command_name, args in commands:

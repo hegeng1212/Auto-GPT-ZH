@@ -26,7 +26,7 @@ from autogpt.commands.twitter import send_tweet
 from autogpt.commands.web_requests import scrape_links, scrape_text
 from autogpt.commands.web_selenium import browse_website
 from autogpt.commands.write_tests import write_tests
-from autogpt.commands.dingtalk import reserve_meeting_room, search_meeting_room
+from autogpt.commands.dingtalk import reserve_meeting_room, search_meeting_room, get_daily_report
 from autogpt.config import Config
 from autogpt.json_utils.json_fix_llm import fix_and_parse_json
 from autogpt.memory import get_memory
@@ -225,6 +225,8 @@ def execute_command(command_name: str, arguments, session_id: str):
             return reserve_meeting_room(session_id, arguments["room_name"], arguments["start_time"], arguments["end_time"])
         elif command_name == "search_meeting_room":
             return search_meeting_room(session_id, arguments["start_time"], arguments["end_time"])
+        elif command_name == "get_daily_report":
+            return get_daily_report(session_id, arguments["date"])
         else:
             return (
                 f"Unknown command '{command_name}'. Please refer to the 'COMMANDS'"
