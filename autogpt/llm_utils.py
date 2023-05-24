@@ -111,11 +111,13 @@ def create_chat_completion(
                     )
                 warned_user = True
                 # 钉钉消息
+                '''
                 logger.dingtalk_log(
                     session_id,
                     f"已到达请求频率限制，将在稍后自动重试。请设置一个已付费的OpenAI API账户来绕过此限制。"
                     + f"您可以在此处阅读更多信息：https://github.com/Significant-Gravitas/Auto-GPT#openai-api-keys-configuration",
                 )
+                '''
         except APIError as e:
             if e.http_status == 502:
                 pass
