@@ -136,7 +136,7 @@ def get_daily_report(session_id, date) -> str:
             assistant_reply,
         )
         print("日报查询成功\n" + assistant_reply)
-        return "日报查询成功"
+        return assistant_reply
     else:
         # 钉钉消息
         logger.dingtalk_log(
@@ -145,7 +145,7 @@ def get_daily_report(session_id, date) -> str:
             res_data["msg"],
         )
         print("日报查询失败\n" + res_data["msg"])
-        return "日报查询失败"
+        return ""
 
 def get_report_prompt(daily, date) -> str:
     prompt = "你是一个智能助理，帮助撰写工作日报。\n"
