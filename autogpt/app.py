@@ -268,10 +268,12 @@ def shutdown(session_id) -> NoReturn:
     """Shut down the program"""
     print("关闭中...")
     # 钉钉消息
+    '''
     logger.dingtalk_log(
         session_id,
         "执行结束",
     )
+    '''
     quit()
 
 
