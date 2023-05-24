@@ -7,6 +7,10 @@ from autogpt.llm_utils import create_chat_completion
 cfg = Config()
 
 def reserve_meeting_room(session_id, room_name, start_time, end_time):
+
+    if room_name == "<room_name>":
+        return
+
     url = "http://bsp.babytree.com/open/dingtalk/ReserveMeetingRoom"
     data = {
         "session_id": session_id,
