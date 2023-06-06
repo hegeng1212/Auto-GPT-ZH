@@ -68,6 +68,8 @@ class LocalCache(MemoryProviderSingleton):
 
         Returns: None
         """
+        #todo 因为没有embedding接口，所以服务暂时注释掉
+        return ""
         if "Command Error:" in text:
             return ""
         self.data.texts.append(text)
@@ -120,6 +122,8 @@ class LocalCache(MemoryProviderSingleton):
 
         Returns: List[str]
         """
+        # todo 因为没有embedding接口，所以服务暂时注释掉
+        return ""
         embedding = create_embedding_with_ada(text)
 
         scores = np.dot(self.data.embeddings, embedding)

@@ -87,6 +87,7 @@ def chat_with_ai(
 
             logger.debug(f"Memory Stats: {permanent_memory.get_stats()}")
 
+            relevant_memory = relevant_memory[:-1]
             (
                 next_message_to_add_index,
                 current_tokens_used,
@@ -94,6 +95,7 @@ def chat_with_ai(
                 current_context,
             ) = generate_context(prompt, relevant_memory, full_message_history, model)
 
+            '''
             while current_tokens_used > 2500:
                 # remove memories until we are under 2500 tokens
                 relevant_memory = relevant_memory[:-1]
@@ -105,6 +107,7 @@ def chat_with_ai(
                 ) = generate_context(
                     prompt, relevant_memory, full_message_history, model
                 )
+            '''
 
             current_tokens_used += token_counter.count_message_tokens(
                 [create_chat_message("user", user_input)], model

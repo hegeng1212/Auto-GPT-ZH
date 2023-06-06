@@ -29,6 +29,11 @@ def run_autogpt():
     # 返回响应
     return get_response(err_msg, status)
 
+@app.route('/healthz', methods=['GET', 'POST'])
+def healthz():
+    # 返回响应
+    return "", 200
+
 def get_response(msg:str, status:str):
     response_data = {
         'message': msg,

@@ -44,8 +44,7 @@ def get_prompt() -> str:
 
     # Define the command list
     commands = [
-        ("Google Search", "google", {"input": "<search>"}),
-
+        #定制化命令在此集成
         (
             "Search Meeting Room (查找可用的会议室)",
             "search_meeting_room",
@@ -61,49 +60,53 @@ def get_prompt() -> str:
             "get_daily_report",
             {"date": "<日报日期，格式Ymd>"},
         ),
-        (
-            "Browse Website",
-            "browse_website",
-            {"url": "<url>", "question": "<what_you_want_to_find_on_website>"},
-        ),
-        (
-            "Start GPT Agent",
-            "start_agent",
-            {"name": "<name>", "task": "<short_task_desc>", "prompt": "<prompt>"},
-        ),
-        (
-            "Message GPT Agent",
-            "message_agent",
-            {"key": "<key>", "message": "<message>"},
-        ),
-        ("List GPT Agents", "list_agents", {}),
-        ("Delete GPT Agent", "delete_agent", {"key": "<key>"}),
-        (
-            "Clone Repository",
-            "clone_repository",
-            {"repository_url": "<url>", "clone_path": "<directory>"},
-        ),
-        ("Write to file", "write_to_file", {"file": "<file>", "text": "<text>"}),
-        ("Read file", "read_file", {"file": "<file>"}),
-        ("Append to file", "append_to_file", {"file": "<file>", "text": "<text>"}),
-        ("Delete file", "delete_file", {"file": "<file>"}),
-        ("Search Files", "search_files", {"directory": "<directory>"}),
-        ("Analyze Code", "analyze_code", {"code": "<full_code_string>"}),
-        (
-            "Get Improved Code",
-            "improve_code",
-            {"suggestions": "<list_of_suggestions>", "code": "<full_code_string>"},
-        ),
-        (
-            "Write Tests",
-            "write_tests",
-            {"code": "<full_code_string>", "focus": "<list_of_focus_areas>"},
-        ),
-        ("Execute Python File", "execute_python_file", {"file": "<file>"}),
-        ("Generate Image", "generate_image", {"prompt": "<prompt>"}),
-        ("Send Tweet", "send_tweet", {"text": "<text>"}),
     ]
 
+    ''' 
+    官方命令全部注释掉，以免影响执行，并且会被复星的openai接口拦截sql关键字，导致报错
+    ("Google Search", "google", {"input": "<search>"}),
+    (
+        "Browse Website",
+        "browse_website",
+        {"url": "<url>", "question": "<what_you_want_to_find_on_website>"},
+    ),
+    (
+        "Start GPT Agent",
+        "start_agent",
+        {"name": "<name>", "task": "<short_task_desc>", "prompt": "<prompt>"},
+    ),
+    (
+        "Message GPT Agent",
+        "message_agent",
+        {"key": "<key>", "message": "<message>"},
+    ),
+    ("List GPT Agents", "list_agents", {}),
+    ("Delete GPT Agent", "delete_agent", {"key": "<key>"}),
+    (
+        "Clone Repository",
+        "clone_repository",
+        {"repository_url": "<url>", "clone_path": "<directory>"},
+    ),
+    ("Write to file", "write_to_file", {"file": "<file>", "text": "<text>"}),
+    ("Read file", "read_file", {"file": "<file>"}),
+    ("Append to file", "append_to_file", {"file": "<file>", "text": "<text>"}),
+    ("Delete file", "delete_file", {"file": "<file>"}),
+    ("Search Files", "search_files", {"directory": "<directory>"}),
+    ("Analyze Code", "analyze_code", {"code": "<full_code_string>"}),
+    (
+        "Get Improved Code",
+        "improve_code",
+        {"suggestions": "<list_of_suggestions>", "code": "<full_code_string>"},
+    ),
+    (
+        "Write Tests",
+        "write_tests",
+        {"code": "<full_code_string>", "focus": "<list_of_focus_areas>"},
+    ),
+    ("Execute Python File", "execute_python_file", {"file": "<file>"}),
+    ("Generate Image", "generate_image", {"prompt": "<prompt>"}),
+    ("Send Tweet", "send_tweet", {"text": "<text>"}),
+ 
     # Only add the audio to text command if the model is specified
     if cfg.huggingface_audio_to_text_model:
         commands.append(
@@ -136,6 +139,7 @@ def get_prompt() -> str:
                 {"url": "<file_url>", "file": "<saved_filename>"},
             ),
         )
+    '''
 
     # Add these command last.
     commands.append(
@@ -144,9 +148,6 @@ def get_prompt() -> str:
     commands.append(
         ("Task Complete (Shutdown)", "task_complete", {"reason": "<reason>"}),
     )
-
-
-
 
     # Add commands to the PromptGenerator object
     for command_label, command_name, args in commands:

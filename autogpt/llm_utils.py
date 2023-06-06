@@ -6,6 +6,8 @@ from ast import List
 import openai
 from colorama import Fore, Style
 from openai.error import APIError, RateLimitError
+import requests
+import json
 
 from autogpt.config import Config
 from autogpt.logs import logger
@@ -91,12 +93,18 @@ def create_chat_completion(
                     max_tokens=max_tokens,
                 )
             else:
+                response = fuson_chat_completion(
+                    model=model,
+                    messages=messages,
+                )
+                '''
                 response = openai.ChatCompletion.create(
                     model=model,
                     messages=messages,
                     temperature=temperature,
                     max_tokens=max_tokens,
                 )
+                '''
             break
         except RateLimitError:
             if CFG.debug_mode:
@@ -151,7 +159,7 @@ def create_chat_completion(
         else:
             quit(1)
 
-    return response.choices[0].message["content"]
+    return response["choices"][0]["message"]["content"]
 
 
 def create_embedding_with_ada(text) -> list:
@@ -186,3 +194,33 @@ def create_embedding_with_ada(text) -> list:
                 f"API Bad gateway. Waiting {backoff} seconds..." + Fore.RESET,
             )
         time.sleep(backoff)
+
+def fuson_chat_completion(
+    messages: list,  # type: ignore
+    model: str | None = None,
+) -> any:
+
+    url = "http://go.babytree.com/go_ai_serv/api/openai/completions"
+    json_data = {
+        "app_name": "dingbot",
+        "secret": "e4dc6995b3833004f0cb66eb4c63529b",
+        "model": model,
+        "messages": messages,
+    }
+    header_data = {
+        "Content-Type": "application/json",
+    }
+
+    try:
+        response = requests.post(url, headers=header_data, json=json_data)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as error:
+        print("error:\n"+error)
+    except requests.exceptions.RequestException as error:
+        print("error:\n" + error)
+
+    res_data = json.loads(json.dumps(response.json()))
+    if res_data["status"] == "success":
+        return res_data["data"]
+    else:
+        return []

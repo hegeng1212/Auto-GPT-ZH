@@ -1,0 +1,1 @@
+#!/bin/bashcd /var/www/autogpt/python -m autogpt
